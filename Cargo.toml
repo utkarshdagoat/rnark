@@ -1,2 +1,7 @@
 [workspace]
-members = ["ff"]
+members = [ "bigint", "ff"]
+
+[workspace.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+rand = "0.8"
+
