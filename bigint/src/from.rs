@@ -1,3 +1,5 @@
+use std::vec;
+
 use crate::BigUint;
 
 impl From<u32> for BigUint {
@@ -19,9 +21,15 @@ impl From<u64> for BigUint {
 
 impl From<u128> for BigUint {
     fn from(value: u128) -> Self {
-        let lower_bits = value as u64; // Rust automatically removes the upper 64 bits
-        let upper_bits = (value >> u64::BITS) as u64;
-        let coefficients = vec![lower_bits, upper_bits];
-        BigUint { coefficients, n: 2 }
+        let bytes = value.to_be_bytes();
+        let (high, low) = bytes.split_at(8);
+        let coefficients = vec![
+            u64::from_be_bytes(low.try_into().unwrap()),
+            u64::from_be_bytes(high.try_into().unwrap()),
+        ];
+        BigUint {
+            coefficients,
+            n: 2,
+        }
     }
 }
