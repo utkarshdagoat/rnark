@@ -1,0 +1,29 @@
+
+running 6 tests
+test test::add_test_u128 ... ok
+test test::from_hex ... ok
+test test::sub_test_u128 ... ok
+test test::test_scalar_mult ... ok
+test test::add_test_u64 ... ok
+a BigUint { coefficients: [2623536861626805472, 10424652189184531423, 9920249030899947128, 9196828468227470855], n: 4 }
+b BigUint { coefficients: [7542649922918342911, 7542649922918342692, 12379813817064611620, 12379813812177893520], n: 4 }
+result BigUint { coefficients: [17106816733836489504, 8437436160694434591, 17102275007484288956, 17291968141207752297, 8099297565350158372, 17949338107712641283, 8596134145241391739, 6172093223836742082], n: 8 }
+test test::test_base_mult ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

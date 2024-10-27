@@ -7,15 +7,15 @@ impl From<u32> for BigUint {
         let coff = vec![(value as u64)];
         BigUint {
             coefficients: coff,
-            n: 1,
         }
+        
     }
 }
 
 impl From<u64> for BigUint {
     fn from(value: u64) -> Self {
         let coefficients = vec![value];
-        BigUint { coefficients, n: 1 }
+        BigUint { coefficients}
     }
 }
 
@@ -29,7 +29,6 @@ impl From<u128> for BigUint {
         ];
         BigUint {
             coefficients,
-            n: 2,
         }
     }
 }
