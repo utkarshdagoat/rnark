@@ -16,7 +16,7 @@ impl BigUint {
             coefficients.push(carry as u64);
             n = n + 1;
         }
-        BigUint { coefficients}
+        BigUint { coefficients }
     }
 
     // multiply a bigint by β^j complexity O(n)
@@ -49,23 +49,22 @@ impl BigUint {
     // In our model as β = 2⁶⁴ = T i.e the max value by the cofficients
     // Thus taking modulo   β^k  is same  as doing addition for the first k cofficients for the BigUint
     pub fn modulo_bases(&self, power: usize) -> BigUint {
-        //  As k < 2^64 ( a very resonable assumption)
-        // summation of cofficients cannot increase a 128
-        // Therefore we can directly sum up the cofficietns and  convert the u128 into BigUint
-        let mut sum: u128 = 0;
+        let mut coffs= vec![];
         for i in 0..power {
-            sum += self.coefficients[i] as u128;
+            coffs.push(self.coefficients[i]);
         }
-        BigUint::from(sum)
+        BigUint {
+            coefficients:coffs
+        } 
     }
 
-    pub fn div_bases(&self,power: usize) -> BigUint {
+    pub fn div_bases(&self, power: usize) -> BigUint {
         let mut coffs = vec![];
         for i in power..self.coefficients.len() {
             coffs.push(self.coefficients[i]);
         }
         BigUint {
-            coefficients:coffs
+            coefficients: coffs,
         }
     }
 
@@ -76,9 +75,47 @@ impl BigUint {
         } else {
             panic!("Invalid inputs of unequal size");
         };
-        if n < KARASTUBA_THRESHOLD {
+        if n <= KARASTUBA_THRESHOLD {
             return BigUint::base_case_mult(a, b);
         }
-        BigUint::zero()
+        let k = n / 2;
+        let mut a0 = a.modulo_bases(k);
+        let mut b0 = b.modulo_bases(k);
+        let mut a1 = a.div_bases(k);
+        let mut b1 = b.div_bases(k);
+        let sa = if a0 == a1 {
+            0
+        } else if a0 > a1 {
+            1
+        } else {
+            -1
+        };
+        let sb = if b0 == b1 {
+            0
+        } else if b0 > b1 {
+            1
+        } else {
+            -1
+        };
+        // should we addC2 or subtract it
+        let scalar = -sa * sb;
+        let mut diff1 = BigUint::sub(&mut a0, &mut a1);
+        let mut diff2 = BigUint::sub(&mut b0, &mut b1);
+
+        let mut c0 = BigUint::karastuba(&mut a0, &mut b0);
+        let mut c1 = BigUint::karastuba(&mut a1, &mut b1);
+        let mut c2 = BigUint::karastuba(&mut diff1, &mut diff2);
+
+        // C := C0 + (C0 + C1  + (− sAsB) C2)βk + C1β2k
+        // C := C0 + (C0 + C1  + scalar*C2)βk + C1β2k
+
+        let mut temp = BigUint::add(&mut c0, &mut c1);
+        if scalar > 0 {
+            temp = BigUint::add(&mut temp, &mut c2).shift_power(k);
+        } else if scalar < 0 {
+            temp = BigUint::sub(&mut temp, &mut c2).shift_power(k);
+        }
+        temp = BigUint::add(&mut temp, &mut c0);
+        return BigUint::add(&mut c1.shift_power(2 * k), &mut temp);
     }
 }
