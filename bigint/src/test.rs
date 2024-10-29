@@ -6,6 +6,8 @@ mod test {
         let value: u128 = 0x1A2B3C4D5E6F7890ABCDEF1234567890;
         let num = BigUint::from_str_radix(&value.to_string(), 10);
         assert_eq!(value, num.try_into().unwrap());
+        let a = BigUint::from_str_radix("1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab",16);
+        println!("{:?}", a);
     }
     #[test]
     fn add_test_u64() {
@@ -31,6 +33,43 @@ mod test {
     }
 
     #[test]
+    fn add_acc_test() {
+        let mut a = BigUint::from_str_radix(
+            "ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE02468ACE02468ACE0FF",
+            16,
+        );
+        let b = BigUint::from_str_radix(
+            "7FA1B2C3D4E5F60789ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE0",
+            16,
+        );
+        a += &b;
+        let sum = BigUint::from_str_radix(
+            "135438778702150141747206744445507229745568383754075343799015122984544803065311",
+            10,
+        );
+        assert_eq!(a, sum);
+    }
+
+    #[test]
+    fn sub_acc_test() {
+        let mut a = BigUint::from_str_radix(
+            "ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE02468ACE02468ACE0FF",
+            16,
+        );
+        let b = BigUint::from_str_radix(
+            "7FA1B2C3D4E5F60789ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE0",
+            16,
+        );
+        a -= &b;
+        // calculated from python
+        let result: BigUint = BigUint::from_str_radix(
+            "19979922826221569069368642657004976767510873894317816736274411222541793506335",
+            10,
+        );
+        assert_eq!(a, result);
+    }
+
+    #[test]
     fn sub_test_u128() {
         let a = u128::MAX / 2;
         let b = u128::MAX / 4;
@@ -42,7 +81,7 @@ mod test {
     }
 
     #[test]
-    fn sub_two_biguints() {
+    fn test_sub_two_biguints() {
         let mut b = BigUint::from_str_radix(
             "ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE02468ACE02468ACE0FF",
             16,

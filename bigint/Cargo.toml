@@ -2,10 +2,3 @@
 name = "bigint"
 version = "0.1.0"
 edition = "2021"
-
-[dependencies]
-criterion.workspace = true
-
-[[bench]]
-name = "karastuba"
-harness = false
