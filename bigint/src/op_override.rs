@@ -21,9 +21,24 @@ impl AddAssign<&BigUint> for BigUint {
     }
 }
 
-
 impl ops::SubAssign<&BigUint> for BigUint {
     fn sub_assign(&mut self, rhs: &BigUint) {
         BigUint::sub_acc(self, rhs);
     }
 }
+
+
+macro_rules! impl_mult_scalar {
+    ($scalar: ty) => {
+        impl std::ops::Mul<$scalar> for &$crate::BigUint {
+            type Output = $crate::BigUint;
+            fn mul(self, rhs: $scalar) -> Self::Output {
+                self.scalar_mult(rhs as u64)
+            }
+        }
+    };
+}
+
+impl_mult_scalar!(i32);
+impl_mult_scalar!(usize);
+impl_mult_scalar!(u32);
