@@ -65,8 +65,7 @@ impl BigUint {
     // add's two big int's stores the result in the first big int
     pub fn add_acc(a: &mut BigUint, b: &BigUint) {
         let mut d: u128 = 0;
-        println!("a: {:?}", a);
-        println!("b: {:?}", b);
+
 
         for (i, ai) in a.coefficients.iter_mut().enumerate() {
             if i < b.coefficients.len() {
@@ -81,7 +80,6 @@ impl BigUint {
                 d = s >> 64;
                 *ai = s as u64 & (u64::MAX);
             }
-            println!("after ai: {:?} \n", ai);
         }
 
         // if b > a

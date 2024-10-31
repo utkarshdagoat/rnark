@@ -15,6 +15,13 @@ impl ops::Sub<&BigUint> for &BigUint {
     }
 }
 
+impl ops::Mul<&BigUint> for &BigUint {
+    type Output = BigUint;
+    fn mul(self, rhs: &BigUint) -> Self::Output {
+        BigUint::mult(&self, rhs)
+    }
+}
+
 impl AddAssign<&BigUint> for BigUint {
     fn add_assign(&mut self, rhs: &BigUint) {
         BigUint::add_acc(self, rhs);
@@ -27,9 +34,8 @@ impl ops::SubAssign<&BigUint> for BigUint {
     }
 }
 
-
 macro_rules! impl_mult_scalar {
-    ($scalar: ty) => {
+    ($scalar: ty ) => {
         impl std::ops::Mul<$scalar> for &$crate::BigUint {
             type Output = $crate::BigUint;
             fn mul(self, rhs: $scalar) -> Self::Output {
@@ -42,3 +48,4 @@ macro_rules! impl_mult_scalar {
 impl_mult_scalar!(i32);
 impl_mult_scalar!(usize);
 impl_mult_scalar!(u32);
+impl_mult_scalar!(u64);

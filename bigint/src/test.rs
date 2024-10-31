@@ -7,7 +7,6 @@ mod test {
         let num = BigUint::from_str_radix(&value.to_string(), 10);
         assert_eq!(value, num.try_into().unwrap());
         let a = BigUint::from_str_radix("1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab",16);
-        println!("{:?}", a);
     }
     #[test]
     fn add_test_u64() {
@@ -146,5 +145,22 @@ mod test {
             10
        );
         assert_eq!(actual_result, result);
+    }
+
+    #[test]
+    fn test_odd_even_karastuba() {
+        let a = BigUint::from_str_radix(
+            "249166486039954038678241653028365438597414117400323598999",
+            10,
+        );
+        let b = BigUint::from_str_radix("4062882539673212545835653973091204775", 10);
+        let result = BigUint::odd_even_karastuba(&a, &b);
+
+        let calculated_result = BigUint::from_str_radix(
+            "1012334165603458524512240045393511714004426277361308599536572405543598559603493271800894020225",
+        10
+        );
+
+        assert_eq!(result, calculated_result);
     }
 }

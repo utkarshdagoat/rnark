@@ -17,7 +17,7 @@ These are the some I can think of though these are subject to change
 # RoadMap
 ## BigInt
 - [ X ] Simple addition of bigint's , to  and into traits for common numeric types
-- [ ] implement Karstuba's algorithm and ToomCook for bigint multiplication
+- [ X ] implement Karstuba's algorithm for bigint multiplication
 - [ ] SvobodaDivision and Recursive divide and conquer for bigint division
 - [ ] Exact division algorith based on Karp-MarkStein trick
 - [ ] implement square root, gcd algorithms

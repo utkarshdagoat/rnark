@@ -1,16 +1,29 @@
 
-running 6 tests
-test test::add_test_u128 ... ok
-test test::from_hex ... ok
-test test::sub_test_u128 ... ok
-test test::test_scalar_mult ... ok
-test test::add_test_u64 ... ok
-a BigUint { coefficients: [2623536861626805472, 10424652189184531423, 9920249030899947128, 9196828468227470855], n: 4 }
-b BigUint { coefficients: [7542649922918342911, 7542649922918342692, 12379813817064611620, 12379813812177893520], n: 4 }
-result BigUint { coefficients: [17106816733836489504, 8437436160694434591, 17102275007484288956, 17291968141207752297, 8099297565350158372, 17949338107712641283, 8596134145241391739, 6172093223836742082], n: 8 }
-test test::test_base_mult ... ok
+running 11 tests
+test test::test::add_test_u64 ... ok
+a , b BigUint { coefficients: [753379716459440791, 49590327075799014, 732234491885515839] } BigUint { coefficients: [254077197233602215, 220249303803356035] }
+coffs for BigUint { coefficients: [753379716459440791, 49590327075799014, 732234491885515839] }
+even_coffs [753379716459440791, 0, 732234491885515839] odd_coffs [49590327075799014]
 
-test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+coffs for BigUint { coefficients: [254077197233602215, 220249303803356035] }
+even_coffs [254077197233602215] odd_coffs [220249303803356035]
+
+test test::test::add_acc_test ... a , b BigUint { coefficients: [753379716459440791, 0, 732234491885515839] } BigUint { coefficients: [254077197233602215] }
+c0 BigUint { coefficients: [1635125010864364161, 10376715047696094, 1416605614263310105, 10085470187727830] }
+a , b BigUint { coefficients: [802970043535239805, 0, 732234491885515839] } BigUint { coefficients: [474326501036958250] }
+ok
+test test::test::add_test_u128 ... oka , b BigUint { coefficients: [220249303803356035] } BigUint { coefficients: [49590327075799014] }
+
+test test::test::from_hex ... ok
+test test::test::sub_test_u128 ... ok
+test test::test::sub_acc_test ... ok
+test test::test::test_scalar_mult ... ok
+test test::test::test_karastuba ... ok
+test test::test::test_base_mult ... ok
+test test::test::test_odd_even_karastuba ... ok
+test test::test::test_sub_two_biguints ... ok
+
+test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
 
 
 running 0 tests

@@ -3,7 +3,6 @@ use std::{cmp::Ordering, u64};
 use crate::BigUint;
 
 pub(crate) const KARASTUBA_THRESHOLD: usize = 2;
-pub(crate) const TOOM_COOK_3_THRESHOLD: usize = 3;
 impl BigUint {
     pub fn scalar_mult(&self, scalar: u64) -> BigUint {
         let mut coefficients = vec![];
@@ -121,44 +120,95 @@ impl BigUint {
         c
     }
 
-    pub fn toom_cook_3(x: &BigUint, y: &BigUint) -> BigUint {
+    // A = A0(x^2) + x * A1(x^2)
+    // taking x = beta^10
+    // this is the optimal value for x
+    pub fn odd_even_karastuba(x: &BigUint, y: &BigUint) -> BigUint {
         let (a, b) = if x > y { (x, y) } else { (y, x) };
-        if a.coefficients.len() < TOOM_COOK_3_THRESHOLD {
-            return BigUint::karastuba(a, b);
+
+        if b.coefficients.len() == 1 {
+            return a * b.coefficients[0];
         }
 
-        let k = a.coefficients.len() / 3;
-        let mut a0 = a.modulo_bases(k);
-        let a1 = &a.modulo_bases(2 * k) - &a0;
-        let a2 = a.div_bases(2 * k);
+        let (mut a0, a1) = a.odd_even();
+        let (mut b0, b1) = b.odd_even();
 
-        let mut b0 = b.modulo_bases(k);
-        let b1 = &b.modulo_bases(2 * k) - &b0;
-        let b2 = b.div_bases(2 * k);
+        let c0 = BigUint::odd_even_karastuba(&a0, &b0);
+        a0 += &a1;
+        b0 += &b1;
 
-        let a02  = &a0 + &a2;
-        let b02 = &b0 + &b2;
+        let mut c1 = BigUint::odd_even_karastuba(&a0, &b0);
 
-        let v0 = BigUint::toom_cook_3(&a0, &b0);
-        let v1 = BigUint::toom_cook_3(&(&a02 + &a1), &(&b02 + &b1));
-        let v_1 = BigUint::toom_cook_3(&(&a02 - &a1), &(&b02 - &b1)); // v-1
+        let mut c2 = BigUint::odd_even_karastuba(&a1, &b1);
+        c1 -= &c0;
+        c1 -= &c2;
 
-        a0 += &(&a1 * 2);
-        a0 += &(&a2 * 4);
-
-        b0 += &(&b1 * 2);
-        b0 += &b2.scalar_mult(4);
-
-        let v2 = BigUint::toom_cook_3(&a0, &b0);
-        let vinf = BigUint::toom_cook_3(&a2, &b2);
-
-        BigUint::zero()
+        c1.shift_power_self(1);
+        c2.shift_power_self(2);
+        &c0 + &(&c1 + &c2)
     }
 
-    pub fn mult(a: &mut BigUint, b: &mut BigUint) -> BigUint {
+    // converts the A(x) to A(x^2)
+    // converts cofficient of beta^i to beta^2i for x = beta
+    // there for coff at i  is not the coff at 2*i;
+    fn square(&mut self) {
+        let n = self.coefficients.len();
+        let mut new_coffs: Vec<u64> = Vec::with_capacity(2 * n);
+        for i in 0..(2 * n) {
+            // only push the cofficients at even
+            if i % 2 == 0 {
+                new_coffs.push(self.coefficients[i / 2]);
+            } else {
+                new_coffs.push(0);
+            }
+        }
+        self.coefficients = new_coffs;
+    }
+
+    // returns the odd and even part of the biguint
+    fn odd_even(&self) -> (BigUint, BigUint) {
+        // if even number of coff -> both size n/2
+        // odd number coffs -> even coffcintns = n/2 + 1 , odd -> n/2
+        let (en, on) = if self.coefficients.len() % 2 == 0 {
+            (self.coefficients.len() / 2, self.coefficients.len() / 1)
+        } else {
+            (self.coefficients.len() / 2 + 1, self.coefficients.len())
+        };
+        let mut odd_coffs: Vec<u64> = Vec::with_capacity(on);
+        let mut even_coffs: Vec<u64> = Vec::with_capacity(en);
+
+        for (i, ai) in self.coefficients.iter().enumerate() {
+            if i % 2 == 0 {
+                if i != 0 {
+                    even_coffs.push(0);
+                }
+                even_coffs.push(*ai);
+            } else {
+                if i != 1 {
+                    odd_coffs.push(0);
+                }
+                odd_coffs.push(*ai);
+            }
+        }
+
+        (
+            BigUint {
+                coefficients: even_coffs,
+            },
+            BigUint {
+                coefficients: odd_coffs,
+            },
+        )
+    }
+
+    pub fn mult(a: &BigUint, b: &BigUint) -> BigUint {
         if a.coefficients.len() <= 32 {
             return BigUint::base_case_mult(a, b);
         }
-        BigUint::zero()
+        if a.coefficients.len() != b.coefficients.len() {
+            return BigUint::odd_even_karastuba(a, b);
+        } else {
+            return BigUint::karastuba(a, b);
+        }
     }
 }
