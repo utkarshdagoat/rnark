@@ -6,7 +6,6 @@ mod test {
         let value: u128 = 0x1A2B3C4D5E6F7890ABCDEF1234567890;
         let num = BigUint::from_str_radix(&value.to_string(), 10);
         assert_eq!(value, num.try_into().unwrap());
-        let a = BigUint::from_str_radix("1a0111ea397fe69a4b1ba7b6434bacd764774b84f38512bf6730d2a0f6b0f6241eabfffeb153ffffb9feffffffffaaab",16);
     }
     #[test]
     fn add_test_u64() {
@@ -102,7 +101,7 @@ mod test {
     #[test]
     fn test_scalar_mult() {
         let a = u128::MAX / 2;
-        let mut a_bn = BigUint::from(a);
+        let a_bn = BigUint::from(a);
         let scalar = 2;
         let scalar_result_bn = a_bn.scalar_mult(scalar);
         let scalar_result = (a as u128) * (scalar as u128);

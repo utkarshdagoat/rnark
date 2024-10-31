@@ -18,7 +18,7 @@ impl ops::Sub<&BigUint> for &BigUint {
 impl ops::Mul<&BigUint> for &BigUint {
     type Output = BigUint;
     fn mul(self, rhs: &BigUint) -> Self::Output {
-        BigUint::mult(&self, rhs)
+        BigUint::mult(self, rhs)
     }
 }
 

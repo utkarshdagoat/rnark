@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, u64};
+use std::{cmp::Ordering};
 
 use crate::BigUint;
 
@@ -109,11 +109,12 @@ impl BigUint {
         let mut c = &c0 + &c1;
         // C := C0 + (C0 + C1  + (− sAsB) C2)βk + C1β2k
         // C := C0 + (C0 + C1  + scalar*C2)βk + C1β2k
-        if scalar > 0 {
-            c += &c2;
-        } else if scalar < 0 {
-            c -= &c2;
+
+        match scalar > 0 {
+            true => c += &c2,
+            false => c -= &c2,
         }
+
         c.shift_power_self(k);
         c += &c0;
         c += &c1.shift_power(2 * k);
@@ -148,29 +149,12 @@ impl BigUint {
         &c0 + &(&c1 + &c2)
     }
 
-    // converts the A(x) to A(x^2)
-    // converts cofficient of beta^i to beta^2i for x = beta
-    // there for coff at i  is not the coff at 2*i;
-    fn square(&mut self) {
-        let n = self.coefficients.len();
-        let mut new_coffs: Vec<u64> = Vec::with_capacity(2 * n);
-        for i in 0..(2 * n) {
-            // only push the cofficients at even
-            if i % 2 == 0 {
-                new_coffs.push(self.coefficients[i / 2]);
-            } else {
-                new_coffs.push(0);
-            }
-        }
-        self.coefficients = new_coffs;
-    }
-
     // returns the odd and even part of the biguint
     fn odd_even(&self) -> (BigUint, BigUint) {
         // if even number of coff -> both size n/2
         // odd number coffs -> even coffcintns = n/2 + 1 , odd -> n/2
         let (en, on) = if self.coefficients.len() % 2 == 0 {
-            (self.coefficients.len() / 2, self.coefficients.len() / 1)
+            (self.coefficients.len() / 2, self.coefficients.len() / 2)
         } else {
             (self.coefficients.len() / 2 + 1, self.coefficients.len())
         };
@@ -206,9 +190,9 @@ impl BigUint {
             return BigUint::base_case_mult(a, b);
         }
         if a.coefficients.len() != b.coefficients.len() {
-            return BigUint::odd_even_karastuba(a, b);
+            BigUint::odd_even_karastuba(a, b)
         } else {
-            return BigUint::karastuba(a, b);
+            BigUint::karastuba(a, b)
         }
     }
 }
