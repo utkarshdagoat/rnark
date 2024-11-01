@@ -4,6 +4,8 @@ mod from;
 mod into;
 mod multiply;
 mod test;
+mod division;
+
 /// BigUint is made up of u32's which are composable in little endian format i.e
 /// lower values is coff[0]. The bases for our Bigint is β = 2^64
 /// Thus a number A is representes as

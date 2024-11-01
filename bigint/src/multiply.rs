@@ -19,6 +19,18 @@ impl BigUint {
         BigUint { coefficients }
     }
 
+    pub fn scalar_mult_self(&mut self, scalar: u64) {
+        let mut carry: u128 = 0; 
+        for a in self.coefficients.iter_mut() {
+            let mul_result = (scalar as u128) * (*a as u128) + carry;
+            *a = mul_result as u64 & u64::MAX;
+            carry = mul_result >> u64::BITS;
+        }
+        if carry != 0 {
+            self.coefficients.push(carry as u64);
+        }
+    }
+
     // multiply a bigint by β^j complexity O(n)
     pub fn shift_power(&self, j: usize) -> BigUint {
         let mut copy = self.clone().coefficients;
