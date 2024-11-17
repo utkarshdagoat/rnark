@@ -1,11 +1,12 @@
-mod op_override;
 mod comp;
+mod div;
+mod division;
 mod from;
 mod into;
+mod macros;
 mod multiply;
+mod op_override;
 mod test;
-mod division;
-
 /// BigUint is made up of u32's which are composable in little endian format i.e
 /// lower values is coff[0]. The bases for our Bigint is β = 2^64
 /// Thus a number A is representes as
@@ -20,11 +21,25 @@ pub struct BigUint {
 pub(crate) const BASES: u128 = 1 << (64); // 2^64
 
 impl BigUint {
+    pub fn new(cofficients: &[u64]) -> BigUint {
+        let mut vec = Vec::new();
+        vec.extend_from_slice(cofficients);
+        BigUint { coefficients: vec }
+    }
+
     //  zero big uint
     pub fn zero() -> BigUint {
         BigUint {
             coefficients: vec![0],
         }
+    }
+
+    pub fn push(&mut self, digit: u64) {
+        self.coefficients.push(digit);
+    }
+
+    pub fn len(&self) -> usize {
+        self.coefficients.len()
     }
 
     pub fn from_str_radix(s: &str, radix: u32) -> BigUint {
@@ -67,7 +82,6 @@ impl BigUint {
     // add's two big int's stores the result in the first big int
     pub fn add_acc(a: &mut BigUint, b: &BigUint) {
         let mut d: u128 = 0;
-
 
         for (i, ai) in a.coefficients.iter_mut().enumerate() {
             if i < b.coefficients.len() {
