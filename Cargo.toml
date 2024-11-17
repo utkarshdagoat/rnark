@@ -1,5 +1,5 @@
 [workspace]
-members = [ "bigint", "ff"]
+members = [ "bigint", "example", "ff"]
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }

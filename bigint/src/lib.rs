@@ -37,9 +37,6 @@ impl BigUint {
         self.coefficients.push(digit);
     }
 
-    pub fn len(&self) -> usize {
-        self.coefficients.len()
-    }
 
     pub fn from_str_radix(s: &str, radix: u32) -> BigUint {
         let mut a = BigUint::zero();

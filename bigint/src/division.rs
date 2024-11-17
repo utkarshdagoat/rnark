@@ -4,8 +4,8 @@ use crate::{widen, BigUint, BASES};
 impl BigUint {
     // THis is my implementation for knuth's algorithm it has taken inspiration from the c algorithm in https://github.com/hcs0/Hackers-Delight/blob/master/divmnu64.c.txt
     pub fn divrem(a: &Self, b: &Self) -> (Self, Self) {
-        let m = a.len();
-        let n = b.len();
+        let m = a.coefficients.len();
+        let n = b.coefficients.len();
         let mut q = vec![0; m - n + 1]; //  quotient
         let mut r = vec![0; n]; // remainder
 
@@ -13,7 +13,7 @@ impl BigUint {
             return (BigUint::zero(), a.clone());
         }
 
-        if n <= 0 {
+        if n == 0 {
             panic!("Biguint:Divide by Zero");
         }
 
@@ -45,12 +45,8 @@ impl BigUint {
             }
             un[0] = a.coefficients[0] << s;
         } else {
-            for i in 0..n {
-                vn[i] = b.coefficients[i];
-            }
-            for i in 0..m {
-                un[i] = a.coefficients[i];
-            }
+            vn.copy_from_slice(&b.coefficients);
+            un[..m].copy_from_slice(&a.coefficients);
         }
 
         for j in (0..=m - n).rev() {
@@ -62,7 +58,7 @@ impl BigUint {
 
             while qhat >= BASES || qhat * widen!(vn[n - 2]) > BASES * rhat + widen!(un[j + n - 2]) {
                 qhat -= 1;
-                rhat = rhat + widen!(vn[n - 1]);
+                rhat += widen!(vn[n - 1]);
                 if rhat >= BASES {
                     break;
                 }
@@ -101,10 +97,7 @@ impl BigUint {
             }
             r[n - 1] = un[n - 1] >> s;
         } else {
-            for i in 0..n - 1 {
-                r[i] = un[i];
-            }
-            r[n - 1] = un[n - 1];
+            r.copy_from_slice(&un[..n]);
         }
 
         //remove leading zeros if any
