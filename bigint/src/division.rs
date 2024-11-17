@@ -2,8 +2,7 @@ use std::ops::Shr;
 
 use crate::{widen, BigUint, BASES};
 impl BigUint {
-    // THis is my implementation for knuth's algorithm it does not give correct remainder for some reason
-    // inspect this
+    // THis is my implementation for knuth's algorithm it has taken inspiration from the c algorithm in https://github.com/hcs0/Hackers-Delight/blob/master/divmnu64.c.txt
     pub fn divrem(a: &Self, b: &Self) -> (Self, Self) {
         let m = a.len();
         let n = b.len();
@@ -109,18 +108,15 @@ impl BigUint {
         }
 
         //remove leading zeros if any
-        if let Some(last_non_zero) = q.iter().rposition(|&x| x != 0){
-            q.truncate(last_non_zero);
+        if let Some(last_non_zero) = q.iter().rposition(|&x| x != 0) {
+            q.truncate(last_non_zero+1);
         }
 
-
-        // as r can be zero we will also check None case 
-        match r.iter().rposition(|&x| x!= 0)  {
-           Some(index) => r.truncate(index),
-           None => r = vec![0]
+        // as r can be zero we will also check None case
+        match r.iter().rposition(|&x| x != 0) {
+            Some(index) => r.truncate(index+1),
+            None => r = vec![0],
         }
-
-
 
         (BigUint::new(&q), BigUint::new(&r))
     }
@@ -137,8 +133,9 @@ fn test_base_case_divrem() {
         16,
     );
 
-    let result_2 = BigUint::divrem(&a, &b);
+    let calc_result = BigUint::from_str_radix("57729427937964286338919050894251126489028754929878763531370355881001504779488", 10);
+    let (q,r) = BigUint::divrem(&a, &b);
 
-    println!("{:?}", result_2.0);
-    println!("{:?}", result_2.1);
+    assert_eq!(r,BigUint::zero());
+    assert_eq!(q,calc_result);
 }

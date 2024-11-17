@@ -1,5 +1,4 @@
 mod comp;
-mod div;
 mod division;
 mod from;
 mod into;
