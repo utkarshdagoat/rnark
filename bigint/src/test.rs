@@ -162,4 +162,13 @@ mod test {
 
         assert_eq!(result, calculated_result);
     }
+
+    #[test]
+    fn test_string_conversion() {
+        let a = BigUint::from_str_radix(
+            "249166486039954038678241653028365438597414117400323598999",
+            10,
+        );
+        assert_eq!(String::from("a296b640d1ff43f00b02e23c5a5ffe60a748adc4c8caa97"),a.to_hex());
+    }
 }

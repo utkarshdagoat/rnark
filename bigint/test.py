@@ -83,6 +83,10 @@ print(0X7FA1B2C3D4E5F60789ABCDEF1234567890ABCDEF13579BDF2468ACE02468ACE0)
 
 r = get_bingint([0])
 print(a%b - r)
+
+c=324089
+q = get_bingint([9169464784958176781, 16362459267421010035, 17747079953408355174, 38198809006716])
+print(b//c - q)
 # def normalize(u, v):
 #     """Normalize u and v so v's leading digit is >= floor(b/2)"""
 #     d = 1

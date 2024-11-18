@@ -13,3 +13,10 @@ These are the following modules I would make from an overview
 - `pcs`: Pcs will be a polynomial commitment scheme library
 
 
+# RoadMap
+## BigInt
+- [ X ] Simple addition of bigint's , to  and into traits for common numeric types
+- [ X ] implement Karstuba's algorithm for bigint multiplication
+- [ X ] bigint division using Knuth's algorithm D
+- [ ] Exact division algorith based on Karp-MarkStein trick
+- [ ] implement square root, gcd algorithms

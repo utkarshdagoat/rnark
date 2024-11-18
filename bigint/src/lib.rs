@@ -1,3 +1,5 @@
+use util::digit_to_str;
+
 mod comp;
 mod division;
 mod from;
@@ -6,6 +8,7 @@ mod macros;
 mod multiply;
 mod op_override;
 mod test;
+mod util;
 /// BigUint is made up of u32's which are composable in little endian format i.e
 /// lower values is coff[0]. The bases for our Bigint is β = 2^64
 /// Thus a number A is representes as
@@ -37,7 +40,6 @@ impl BigUint {
         self.coefficients.push(digit);
     }
 
-
     pub fn from_str_radix(s: &str, radix: u32) -> BigUint {
         let mut a = BigUint::zero();
 
@@ -47,6 +49,46 @@ impl BigUint {
             a = &temp + &char_bigint;
         }
         a
+    }
+
+    // remove trailing zeroes in cofficients if any
+    pub fn remove_trailing_zeroes(&mut self) {
+        match self.coefficients.iter().rposition(|&x| x != 0) {
+            Some(index) => self.coefficients.truncate(index + 1),
+            None => self.coefficients = vec![0],
+        }
+    }
+
+    /// consumes the Biguint and returns the string
+    pub fn to_str_radix(&mut self, radix: u32) -> String {
+        if radix > 16 {
+            panic!("max radix reached only upto hex allowed");
+        }
+        let mut s: Vec<char> = Vec::new();
+
+        while !self.is_zero() {
+            let modulo = self.mod_scalar(radix.into());
+            let char = digit_to_str(modulo).unwrap();
+            s.push(char);
+            self.div_scalar_acc(radix.into());
+            self.remove_trailing_zeroes();
+        }
+
+        s.into_iter().rev().collect()
+    }
+
+    pub fn to_hex(&self) -> String {
+        let mut c = self.clone();
+        c.to_str_radix(16)
+    }
+
+    pub fn to_decimal(&self) -> String {
+        let mut c = self.clone();
+        c.to_str_radix(10)
+    }
+
+    pub fn is_zero(&self) -> bool {
+        self.coefficients.len() == 1 && self.coefficients.last() == Some(&0)
     }
 
     /// add's two big int's and returns a new bigint
